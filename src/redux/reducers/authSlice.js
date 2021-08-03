@@ -1,9 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from '../../axios';
 
-export const register = createAsyncThunk('auth/register', async () => {
-  return {
-    payload: [],
-  };
+export const register = createAsyncThunk('auth/register', async body => {
+  const { data } = axios.post('/auth/register', body);
+
+  axios.defaults.headers.common[
+    'Authorization'
+  ] = `Bearer ${data.access_token}`;
+
+  return data;
 });
 
 export const authSlice = createSlice({
@@ -12,7 +17,6 @@ export const authSlice = createSlice({
     errors: null,
     status: 'idle',
     user: null,
-    message: null,
   },
   reducers: {},
   extraReducers: builder => {
@@ -22,12 +26,11 @@ export const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.user = action.payload.user;
-        state.user = action.payload.message;
+        state.user = action.user;
       })
       .addCase(register.rejected, (state, action) => {
         state.errors = action.payload;
-        state.status = 'loading';
+        state.status = 'failed';
       });
   },
 });

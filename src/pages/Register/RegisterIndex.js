@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { register } from '../../redux/reducers/authSlice';
@@ -16,6 +17,13 @@ const RegisterIndex = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (auth.status === 'succeeded' && auth.user) {
+      history.push('/');
+    }
+    // eslint-disable-next-line
+  }, [auth.status]);
 
   const registerForm = useFormik({
     initialValues: {
@@ -25,11 +33,6 @@ const RegisterIndex = () => {
       email: '',
       password: '',
       confirm_password: '',
-    },
-    validate: value => {
-      const errors = {};
-
-      return errors;
     },
     onSubmit: values => {
       dispatch(register(values));
@@ -49,7 +52,7 @@ const RegisterIndex = () => {
           <Text>Fill up the form below to create an account</Text>
         </Box>
         <form onSubmit={registerForm.handleSubmit}>
-          <FormControl mb="4">
+          <FormControl isDisabled={auth.status === 'loading'} mb="4">
             <Input
               name="first_name"
               id="first_name"
@@ -58,7 +61,7 @@ const RegisterIndex = () => {
               placeholder="First Name"
             />
           </FormControl>
-          <FormControl mb="4">
+          <FormControl isDisabled={auth.status === 'loading'} mb="4">
             <Input
               name="last_name"
               id="last_name"
@@ -67,7 +70,7 @@ const RegisterIndex = () => {
               placeholder="Last Name"
             />
           </FormControl>
-          <FormControl mb="4">
+          <FormControl isDisabled={auth.status === 'loading'} mb="4">
             <Input
               name="username"
               id="username"
@@ -76,7 +79,7 @@ const RegisterIndex = () => {
               placeholder="Username"
             />
           </FormControl>
-          <FormControl mb="4">
+          <FormControl isDisabled={auth.status === 'loading'} mb="4">
             <Input
               name="email"
               id="email"
@@ -85,7 +88,7 @@ const RegisterIndex = () => {
               placeholder="Email"
             />
           </FormControl>
-          <FormControl mb="4">
+          <FormControl isDisabled={auth.status === 'loading'} mb="4">
             <Input
               name="password"
               id="password"
@@ -95,7 +98,7 @@ const RegisterIndex = () => {
               type="password"
             />
           </FormControl>
-          <FormControl>
+          <FormControl isDisabled={auth.status === 'loading'}>
             <Input
               onChange={registerForm.handleChange}
               name="confirm_password"
@@ -105,10 +108,17 @@ const RegisterIndex = () => {
             />
           </FormControl>
           <VStack mt="6">
-            <Button colorScheme="blue" type="submit" variant="solid" w="full">
+            <Button
+              isLoading={auth.status === 'loading'}
+              colorScheme="blue"
+              type="submit"
+              variant="solid"
+              w="full"
+            >
               Register
             </Button>
             <Button
+              isDisabled={auth.status === 'loading'}
               onClick={() => history.push('/login')}
               w="full"
               colorScheme="blue"

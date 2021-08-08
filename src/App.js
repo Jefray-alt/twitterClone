@@ -10,15 +10,16 @@ import { ChakraProvider, theme } from '@chakra-ui/react';
 import HomeIndex from './pages/Home/HomeIndex';
 import LoginIndex from './pages/Login/LoginIndex';
 import RegisterIndex from './pages/Register/RegisterIndex';
+import PrivateRoute from './components/PrivateRoute';
 // Plugins
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       <Switch>
-        <Route exact path="/">
+        <PrivateRoute exact path="/">
           <HomeIndex />
-        </Route>
+        </PrivateRoute>
         <Route path="/login">
           <LoginIndex />
         </Route>
